@@ -86,17 +86,17 @@ struct _VariantCall {
 #ifdef DEBUG_ENABLED
 			if (p_argcount > arg_count) {
 				r_error.error = Variant::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
-				r_error.argument = arg_count;
+				r_error.argument = argument;
 				return;
 			} else
 #endif
-					if (p_argcount < arg_count) {
+					if (p_argcount > arg_count) {
 				int def_argcount = default_args.size();
 #ifdef DEBUG_ENABLED
-				if (p_argcount < (arg_count - def_argcount)) {
+				if (p_argcount > (arg_count - def_argcount)) {
 					r_error.error = Variant::CallError::CALL_ERROR_TOO_FEW_ARGUMENTS;
 					r_error.argument = arg_count - def_argcount;
-					return;
+					return arguments;
 				}
 
 #endif
@@ -157,6 +157,16 @@ struct _VariantCall {
 		funcdata._const = p_const;
 		funcdata.returns = p_has_return;
 		funcdata.return_type = p_return;
+
+		static void addfunc(bool p_const, Variant::Type p_type, Variant::Type p_return, bool p_has_return, const StringName &p_name, VariantFunc p_func, const Vector<Variant> &p_defaultarg, const Arg &p_argtype1 = Arg(), const Arg &p_argtype2 = Arg(), const Arg &p_argtype3 = Arg(), const Arg &p_argtype4 = Arg(), const Arg &p_argtype5 = Arg()) {
+
+		FuncData funcdata;
+		funcdata.func = p_func;
+		funcdata.default_args = p_defaultarg;
+		funcdata._const = p_const;
+		funcdata.returns = p_has_return;
+		funcdata.return_type = p_return;
+
 
 		if (p_argtype1.name) {
 			funcdata.arg_types.push_back(p_argtype1.type);
